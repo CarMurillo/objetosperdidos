@@ -75,7 +75,19 @@ class _ChatPageState extends State<ChatPage> {
                     child: CircularProgressIndicator(),
                   );
                 }
+
                 final messages = snapshot.data!.docs.reversed;
+
+                if (messages.isEmpty) {
+                  // Si no hay mensajes, mostramos el mensaje
+                  return Center(
+                    child: Text(
+                      'No hay mensajes aún. Sé el primero en enviar uno!',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  );
+                }
+
                 List<Widget> messageWidgets = [];
                 for (var message in messages) {
                   final messageText = message['text'];

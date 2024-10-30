@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -18,13 +17,17 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
   File? _imageFile;
   List<String> imageUrls = [];
   late TextEditingController _descripcionController;
+  late TextEditingController _salonController;
   late String _categoriaSeleccionada;
+  late String _edificioSeleccionado;
 
   @override
   void initState() {
     super.initState();
     _descripcionController = TextEditingController();
+    _salonController = TextEditingController();
     _categoriaSeleccionada = 'Objeto Encontrado';
+    _edificioSeleccionado = 'Edificio A'; // Valor inicial para el Dropdown
   }
 
   Future<void> _getImageFromGallery() async {
@@ -40,25 +43,22 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
   }
 
   Future<void> guardarDatosEnFirestore(String imageUrl) async {
-    // Obtener el usuario actual
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
-      // Obtener una referencia a la colección 'objetos'
-      final CollectionReference objetos =
-          FirebaseFirestore.instance.collection('objetos');
+      final CollectionReference objetos = FirebaseFirestore.instance.collection('objetos');
 
-      // Agregar un nuevo documento a la colección 'objetos'
       await objetos.add({
         'categoria': _categoriaSeleccionada,
         'descripcion': _descripcionController.text,
         'imageUrl': imageUrl,
-        'userId': user.uid, // Guardar el ID del usuario
-        'userEmail': user.email, // Guardar el email del usuario (opcional)
-        'timestamp': FieldValue.serverTimestamp(), // Agregar marca de tiempo
+        'salon': int.tryParse(_salonController.text), // Guardar el salón como número entero
+        'edificio': _edificioSeleccionado,
+        'userId': user.uid,
+        'userEmail': user.email,
+        'timestamp': FieldValue.serverTimestamp(),
       });
 
-      // Volver a la página principal después de guardar los datos
       Navigator.pop(
         context,
         MaterialPageRoute(builder: (context) => PaginaPrincipal()),
@@ -150,6 +150,41 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
               },
             ),
             SizedBox(height: 16.0),
+            TextFormField(
+              controller: _salonController,
+              decoration: InputDecoration(
+                labelText: 'Salón',
+              ),
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, ingrese el número de salón';
+                }
+                if (int.tryParse(value) == null) {
+                  return 'El salón debe ser un número entero';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16.0),
+            DropdownButtonFormField<String>(
+              value: _edificioSeleccionado,
+              onChanged: (value) {
+                setState(() {
+                  _edificioSeleccionado = value!;
+                });
+              },
+              items: ['Edificio A', 'Edificio B', 'Edificio C'].map((edificio) {
+                return DropdownMenuItem<String>(
+                  value: edificio,
+                  child: Text(edificio),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: 'Edificio',
+              ),
+            ),
+            SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _getImageFromGallery,
               child: Text('Seleccionar Imagen'),
@@ -158,7 +193,8 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
             ElevatedButton(
               onPressed: () {
                 if (_imageFile != null &&
-                    _descripcionController.text.isNotEmpty) {
+                    _descripcionController.text.isNotEmpty &&
+                    _salonController.text.isNotEmpty) {
                   final Reference ref = FirebaseStorage.instance
                       .ref()
                       .child('${DateTime.now()}.jpg');
@@ -176,7 +212,7 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                          'Por favor, seleccione una imagen y agregue una descripción.'),
+                          'Por favor, seleccione una imagen, agregue una descripción y el salón.'),
                     ),
                   );
                 }

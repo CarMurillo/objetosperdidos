@@ -87,24 +87,40 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
           final objetos = snapshot.data!.docs;
 
+          if (objetos.isEmpty) {
+            // Mostrar un mensaje si no hay objetos subidos
+            return Center(
+              child: Text(
+                'No hay ningún objeto subido',
+                style: TextStyle(fontSize: 18, color: Colors.black54),
+              ),
+            );
+          }
+
           return SingleChildScrollView(
             child: Column(
               children: objetos.map((doc) {
                 final data = doc.data() as Map<String, dynamic>;
-                final imageUrl = data['imageUrl'] as String;
-                final userId = data['userId'] as String;
-                final descripcion = data['descripcion'] as String;
-                final categoria = data['categoria'] as String;
+
+                // Manejo seguro de los campos con valores por defecto si son nulos
+                final imageUrl = data['imageUrl'] != null ? data['imageUrl'] as String : null;
+                final userId = data['userId'] != null ? data['userId'] as String : 'unknown_user';
+                final descripcion = data['descripcion'] != null ? data['descripcion'] as String : 'Sin descripción';
+                final categoria = data['categoria'] != null ? data['categoria'] as String : 'Sin categoría';
+                final salon = data['salon'] != null ? data['salon'].toString() : 'Sin salón'; // Añadido para mostrar el salón
+                final edificio = data['edificio'] != null ? data['edificio'] as String : 'Sin edificio'; // Añadido para mostrar el edificio
                 final chatId = doc.id; // Usar el ID del documento como chatId
 
                 return ContenedorPersonalizado(
                   imagePath: imageUrl,
                   category: categoria,
                   descriptionText: descripcion,
+                  salon: salon, 
+                  edificio: edificio, 
                   iconData: Icons.message_rounded,
                   showDeleteIcon:
                       _currentUser != null && _currentUser!.uid == userId,
-                  onDelete: () => _deleteObject(doc.id, imageUrl),
+                  onDelete: () => _deleteObject(doc.id, imageUrl ?? ''),
                   chatId: chatId,
                 );
               }).toList(),
@@ -133,9 +149,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 }
 
 class ContenedorPersonalizado extends StatelessWidget {
-  final String imagePath;
+  final String? imagePath;
   final String category;
   final String descriptionText;
+  final String salon; // Añadido para mostrar el salón
+  final String edificio; // Añadido para mostrar el edificio
   final IconData iconData;
   final bool showDeleteIcon;
   final VoidCallback onDelete;
@@ -145,6 +163,8 @@ class ContenedorPersonalizado extends StatelessWidget {
     required this.imagePath,
     required this.category,
     required this.descriptionText,
+    required this.salon, // Añadido para mostrar el salón
+    required this.edificio, // Añadido para mostrar el edificio
     required this.iconData,
     this.showDeleteIcon = false,
     required this.onDelete,
@@ -194,15 +214,19 @@ class ContenedorPersonalizado extends StatelessWidget {
               ],
             ),
             SizedBox(height: 0.3),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                imagePath,
-                width: 300,
-                height: 300,
-                fit: BoxFit.cover,
+            if (imagePath != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  imagePath!,
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
+            SizedBox(height: 20),
+            Text('Salón: $salon'), // Mostrar el salón
+            Text('Edificio: $edificio'), // Mostrar el edificio
             SizedBox(height: 20),
             Container(
               color: Color.fromARGB(68, 255, 255, 255),

@@ -4,10 +4,10 @@ import 'package:aplicacion/page/Inicio.dart';
 
 // Configuración de Firebase
 const firebaseConfig = FirebaseOptions(
-  apiKey: "AIzaSyA5Kn6KWhdc-SFZfzmZQlGUPvHFcLCz8QU",
-  appId: "1:926421817147:android:9c16ef8b390f0c1d2a491e",
-  projectId: "cosigocorrecto",
-  storageBucket: "gs://cosigocorrecto.appspot.com", //ruta de acceso a storage.
+  apiKey: "AIzaSyCm5hq0NtxHXq7NILwkK3UdRveAWPMI-fA",
+  appId: "1:60050547136:android:7fb60902b989cda906a825",
+  projectId: "proyecto-de-grado-adc82",
+  storageBucket: "gs://proyecto-de-grado-adc82.appspot.com", //ruta de acceso a storage.
   messagingSenderId: "your-messaging-sender-id",
 );
 
