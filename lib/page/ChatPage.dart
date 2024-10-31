@@ -23,7 +23,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color.fromARGB(255, 90, 245, 90), // Verde claro
+          backgroundColor: Color(0xFFC3D631), // Verde claro
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

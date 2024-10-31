@@ -39,7 +39,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color.fromARGB(255, 75, 175, 100), // Verde claro
+          backgroundColor: Color(0xFFC3D631), // Verde claro
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,7 +147,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
               );
             },
-            backgroundColor: Color.fromARGB(255, 75, 175, 100), // Verde claro
+            backgroundColor: Color(0xFFC3D631), // Verde claro
             child: Container(
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(horizontal: 8),

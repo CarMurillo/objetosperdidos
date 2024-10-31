@@ -7,12 +7,11 @@ class Inicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Color.fromARGB(255, 245, 245, 245), // Color de fondo suave
+      backgroundColor: Colors.white, // Color de fondo blanco
       appBar: AppBar(
-        title: Text('INICIO'),
+        title: SizedBox.shrink(), // Eliminar el título
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 34, 139, 34), // Color verde
+        backgroundColor: Color(0xFFC3D631), // Color verde
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -63,7 +62,8 @@ class Inicio extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromARGB(255, 34, 139, 34), // Color verde
+        backgroundColor:
+            Color(0xFFC3D631), // Color de los botones con referencia #c3d631
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30), // Bordes redondeados
         ),
@@ -72,7 +72,7 @@ class Inicio extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 18, color: Colors.white),
+        style: TextStyle(fontSize: 18, color: Colors.black), // Texto en negro
       ),
     );
   }
@@ -88,6 +88,7 @@ class redessociales extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
+            color: Colors.black, // Texto en negro
           ),
         ),
         SizedBox(height: 10),

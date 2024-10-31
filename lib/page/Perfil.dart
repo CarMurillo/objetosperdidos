@@ -47,7 +47,7 @@ class _PerfilState extends State<Perfil> {
       // Eliminar el chat asociado (suponiendo que el chat tiene el mismo ID que el objeto)
       await _firestore.collection('chats').doc(objetoId).delete();
 
-      _getUserData(); // Refresh the list after deletion
+      _getUserData(); // Refrescar la lista después de la eliminación
     } catch (e) {
       print('Error al eliminar el objeto: $e');
     }
@@ -56,10 +56,11 @@ class _PerfilState extends State<Perfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Fondo blanco
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color.fromARGB(255, 105, 208, 240),
+          backgroundColor: Color(0xFFC3D631), // Color verde de la AppBar
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,24 +101,38 @@ class _PerfilState extends State<Perfil> {
           : SingleChildScrollView(
               padding: EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // Centrando el contenido
                 children: [
                   Text(
                     'Bienvenido, ${_user!.displayName ?? 'Usuario'}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black), // Color de letra negro
                   ),
                   SizedBox(height: 16.0),
                   Text(
                     'Tus objetos subidos:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black), // Color de letra negro
                   ),
                   SizedBox(height: 8.0),
-                  if (_objetos.isEmpty) Text('No has subido ningún objeto.'),
+                  if (_objetos.isEmpty)
+                    Text('No has subido ningún objeto.',
+                        style: TextStyle(
+                            color: Colors.black)), // Color de letra negro
                   for (var objeto in _objetos)
                     Card(
                       child: ListTile(
                         leading: Image.network(objeto['imageUrl']),
-                        title: Text(objeto['descripcion']),
+                        title: Text(objeto['descripcion'],
+                            style: TextStyle(
+                                color: Colors.white)), // Color de letra blanco
+                        tileColor:
+                            Color(0xFFC3D631), // Color de fondo del ListTile
                         trailing: IconButton(
                           icon: Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
