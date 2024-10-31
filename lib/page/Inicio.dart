@@ -7,8 +7,12 @@ class Inicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          Color.fromARGB(255, 245, 245, 245), // Color de fondo suave
       appBar: AppBar(
-        title: Text('INICIO'), // Título de la barra superior
+        title: Text('INICIO'),
+        centerTitle: true,
+        backgroundColor: Color.fromARGB(255, 34, 139, 34), // Color verde
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -24,44 +28,51 @@ class Inicio extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () async {
+              _buildElevatedButton(
+                context,
+                'Iniciar sesión',
+                () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => IniciarSesion()),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16.0, horizontal: 32.0),
-                  child: Text(
-                    'Iniciar sesión', // Texto del botón de Inicio de sesión
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
+              _buildElevatedButton(
+                context,
+                'Registrarse',
+                () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => Registrarse()),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 16.0, horizontal: 32.0),
-                  child: Text(
-                    'Registrarse', // Texto del botón de Registrarse
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
               ),
               SizedBox(height: 40),
               redessociales(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildElevatedButton(
+      BuildContext context, String text, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color.fromARGB(255, 34, 139, 34), // Color verde
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30), // Bordes redondeados
+        ),
+        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
+        elevation: 5, // Sombra
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 18, color: Colors.white),
       ),
     );
   }
@@ -83,41 +94,29 @@ class redessociales extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
-              onTap: () {
-                launch('https://www.facebook.com/');
-              },
-              child: Image.asset(
-                'img/Facebooklogo.jpg',
-                width: 40,
-                height: 40,
-              ),
-            ),
+            _buildSocialIcon(
+                'https://www.facebook.com/', 'img/Facebooklogo.jpg'),
             SizedBox(width: 20),
-            GestureDetector(
-              onTap: () {
-                launch('https://www.instagram.com/');
-              },
-              child: Image.asset(
-                'img/logoinstagram.png',
-                width: 40,
-                height: 40,
-              ),
-            ),
+            _buildSocialIcon(
+                'https://www.instagram.com/', 'img/logoinstagram.png'),
             SizedBox(width: 20),
-            GestureDetector(
-              onTap: () {
-                launch('https://twitter.com/');
-              },
-              child: Image.asset(
-                'img/logox.png',
-                width: 40,
-                height: 40,
-              ),
-            ),
+            _buildSocialIcon('https://twitter.com/', 'img/logox.png'),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildSocialIcon(String url, String asset) {
+    return GestureDetector(
+      onTap: () {
+        launch(url);
+      },
+      child: Image.asset(
+        asset,
+        width: 40,
+        height: 40,
+      ),
     );
   }
 }

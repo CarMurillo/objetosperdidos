@@ -23,10 +23,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
 
   Future<void> _deleteObject(String docId, String imageUrl) async {
     try {
-      // Eliminar la imagen de Firebase Storage
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-
-      // Eliminar el documento de Firestore
       await FirebaseFirestore.instance
           .collection('objetos')
           .doc(docId)
@@ -42,7 +39,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color.fromARGB(255, 65, 131, 151),
+          backgroundColor: Color.fromARGB(255, 75, 175, 100), // Verde claro
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,7 +49,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.white, // Texto en blanco
                 ),
               ),
               Spacer(),
@@ -88,11 +85,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           final objetos = snapshot.data!.docs;
 
           if (objetos.isEmpty) {
-            // Mostrar un mensaje si no hay objetos subidos
             return Center(
               child: Text(
                 'No hay ningún objeto subido',
-                style: TextStyle(fontSize: 18, color: Colors.black54),
+                style:
+                    TextStyle(fontSize: 18, color: Colors.black), // Texto negro
               ),
             );
           }
@@ -102,21 +99,32 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               children: objetos.map((doc) {
                 final data = doc.data() as Map<String, dynamic>;
 
-                // Manejo seguro de los campos con valores por defecto si son nulos
-                final imageUrl = data['imageUrl'] != null ? data['imageUrl'] as String : null;
-                final userId = data['userId'] != null ? data['userId'] as String : 'unknown_user';
-                final descripcion = data['descripcion'] != null ? data['descripcion'] as String : 'Sin descripción';
-                final categoria = data['categoria'] != null ? data['categoria'] as String : 'Sin categoría';
-                final salon = data['salon'] != null ? data['salon'].toString() : 'Sin salón'; // Añadido para mostrar el salón
-                final edificio = data['edificio'] != null ? data['edificio'] as String : 'Sin edificio'; // Añadido para mostrar el edificio
-                final chatId = doc.id; // Usar el ID del documento como chatId
+                final imageUrl = data['imageUrl'] != null
+                    ? data['imageUrl'] as String
+                    : null;
+                final userId = data['userId'] != null
+                    ? data['userId'] as String
+                    : 'unknown_user';
+                final descripcion = data['descripcion'] != null
+                    ? data['descripcion'] as String
+                    : 'Sin descripción';
+                final categoria = data['categoria'] != null
+                    ? data['categoria'] as String
+                    : 'Sin categoría';
+                final salon = data['salon'] != null
+                    ? data['salon'].toString()
+                    : 'Sin salón';
+                final edificio = data['edificio'] != null
+                    ? data['edificio'] as String
+                    : 'Sin edificio';
+                final chatId = doc.id;
 
                 return ContenedorPersonalizado(
                   imagePath: imageUrl,
                   category: categoria,
                   descriptionText: descripcion,
-                  salon: salon, 
-                  edificio: edificio, 
+                  salon: salon,
+                  edificio: edificio,
                   iconData: Icons.message_rounded,
                   showDeleteIcon:
                       _currentUser != null && _currentUser!.uid == userId,
@@ -139,8 +147,15 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
               );
             },
-            backgroundColor: Color.fromARGB(255, 86, 90, 139),
-            child: Text('Nuevo'),
+            backgroundColor: Color.fromARGB(255, 75, 175, 100), // Verde claro
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                'Nuevo Objeto',
+                style: TextStyle(color: Colors.white), // Texto en blanco
+              ),
+            ),
           ),
         ),
       ),
@@ -152,23 +167,23 @@ class ContenedorPersonalizado extends StatelessWidget {
   final String? imagePath;
   final String category;
   final String descriptionText;
-  final String salon; // Añadido para mostrar el salón
-  final String edificio; // Añadido para mostrar el edificio
+  final String salon;
+  final String edificio;
   final IconData iconData;
   final bool showDeleteIcon;
   final VoidCallback onDelete;
-  final String chatId; // Agregado para recibir el ID del chat
+  final String chatId;
 
   const ContenedorPersonalizado({
     required this.imagePath,
     required this.category,
     required this.descriptionText,
-    required this.salon, // Añadido para mostrar el salón
-    required this.edificio, // Añadido para mostrar el edificio
+    required this.salon,
+    required this.edificio,
     required this.iconData,
     this.showDeleteIcon = false,
     required this.onDelete,
-    required this.chatId, // Agregado para recibir el ID del chat
+    required this.chatId,
   });
 
   @override
@@ -179,9 +194,9 @@ class ContenedorPersonalizado extends StatelessWidget {
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: const Color.fromARGB(255, 74, 102, 126),
+          color: Colors.blue[50], // Fondo azul celeste muy claro
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 5)
+            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5)
           ],
         ),
         child: Column(
@@ -190,19 +205,25 @@ class ContenedorPersonalizado extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () {
-                    // Acción del botón (opcional)
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromARGB(255, 105, 188, 163),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                // Contenedor con borde azul rey y fondo transparente
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Color.fromARGB(255, 65, 105, 225),
+                        width: 3), // Borde azul rey más grueso
+                    borderRadius:
+                        BorderRadius.circular(8), // Redondear los bordes
+                    color: Colors.transparent, // Fondo transparente
+                  ),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 2), // Más ajustado
+                  child: TextButton(
+                    onPressed: () {},
                     child: Text(
                       category,
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold), // Texto en negro
                     ),
                   ),
                 ),
@@ -213,29 +234,50 @@ class ContenedorPersonalizado extends StatelessWidget {
                   ),
               ],
             ),
-            SizedBox(height: 0.3),
+            SizedBox(height: 10),
             if (imagePath != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  imagePath!,
-                  width: 300,
-                  height: 300,
-                  fit: BoxFit.cover,
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: Colors.black,
+                      width: 2), // Borde negro alrededor de la imagen
+                  borderRadius: BorderRadius.circular(10), // Bordes redondeados
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    imagePath!,
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            SizedBox(height: 20),
-            Text('Salón: $salon'), // Mostrar el salón
-            Text('Edificio: $edificio'), // Mostrar el edificio
-            SizedBox(height: 20),
+            SizedBox(height: 10),
+            Text('Salón: $salon',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)), // Texto negro
+            Text('Edificio: $edificio',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)), // Texto negro
+            SizedBox(height: 10),
             Container(
-              color: Color.fromARGB(68, 255, 255, 255),
-              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                border: Border.all(
+                    color: Colors.grey[800]!, width: 1.5), // Borde gris oscuro
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.grey[300], // Color gris claro para el fondo
+              ),
+              padding: EdgeInsets.all(8),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       descriptionText,
+                      style: TextStyle(
+                          fontSize: 14, color: Colors.black), // Texto negro
                     ),
                   ),
                   SizedBox(width: 10),
@@ -244,14 +286,14 @@ class ContenedorPersonalizado extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              ChatPage(chatId: chatId), // Pasar el ID del chat
+                          builder: (context) => ChatPage(chatId: chatId),
                         ),
                       );
                     },
                     child: Icon(
                       iconData,
                       size: 40,
+                      color: Colors.grey[800], // Gris oscuro para el icono
                     ),
                   )
                 ],

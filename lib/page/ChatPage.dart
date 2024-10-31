@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aplicacion/page/Perfil.dart';
 
 class ChatPage extends StatefulWidget {
-  final String chatId; // Recibir el ID del chat
+  final String chatId;
 
   ChatPage({required this.chatId});
 
@@ -23,7 +23,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color.fromARGB(255, 105, 208, 240),
+          backgroundColor: Color.fromARGB(255, 90, 245, 90), // Verde claro
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black, // Color negro
                 ),
               ),
               Spacer(),
@@ -59,91 +59,118 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder(
-              stream: _firestore
-                  .collection('chats')
-                  .doc(widget.chatId)
-                  .collection('messages')
-                  .orderBy('timestamp')
-                  .snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                final messages = snapshot.data!.docs.reversed;
-
-                if (messages.isEmpty) {
-                  // Si no hay mensajes, mostramos el mensaje
-                  return Center(
-                    child: Text(
-                      'No hay mensajes aún. Sé el primero en enviar uno!',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  );
-                }
-
-                List<Widget> messageWidgets = [];
-                for (var message in messages) {
-                  final messageText = message['text'];
-                  final messageSender = message['sender'];
-
-                  final currentUser = _auth.currentUser;
-                  final messageWidget = MessageBubble(
-                    text: messageText,
-                    sender: messageSender,
-                    isMe: currentUser != null &&
-                        currentUser.email == messageSender,
-                  );
-                  messageWidgets.add(messageWidget);
-                }
-                return ListView(
-                  reverse: true,
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                  children: messageWidgets,
-                );
-              },
+      body: Container(
+        color: Colors.white, // Fondo blanco
+        child: Stack(
+          children: [
+            // Imagen de fondo
+            Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width *
+                    0.8, // 80% del ancho de la pantalla
+                height: MediaQuery.of(context).size.height *
+                    0.3, // 30% de la altura de la pantalla
+                child: Image.asset(
+                  'img/imagen-universidad.jpg',
+                  fit: BoxFit.contain, // Ajusta la imagen sin recortarla
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+            // Contenido del chat
+            Column(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Type your message...',
-                    ),
+                  child: StreamBuilder(
+                    stream: _firestore
+                        .collection('chats')
+                        .doc(widget.chatId)
+                        .collection('messages')
+                        .orderBy('timestamp')
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      final messages = snapshot.data!.docs.reversed;
+
+                      if (messages.isEmpty) {
+                        // Si no hay mensajes, mostramos el mensaje
+                        return Center(
+                          child: Text(
+                            'No hay mensajes aún. Sé el primero en enviar uno!',
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black), // Color negro
+                          ),
+                        );
+                      }
+
+                      List<Widget> messageWidgets = [];
+                      for (var message in messages) {
+                        final messageText = message['text'];
+                        final messageSender = message['sender'];
+
+                        final currentUser = _auth.currentUser;
+                        final messageWidget = MessageBubble(
+                          text: messageText,
+                          sender: messageSender,
+                          isMe: currentUser != null &&
+                              currentUser.email == messageSender,
+                        );
+                        messageWidgets.add(messageWidget);
+                      }
+                      return ListView(
+                        reverse: true,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                        children: messageWidgets,
+                      );
+                    },
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () async {
-                    final currentUser = _auth.currentUser;
-                    if (currentUser != null) {
-                      await _firestore
-                          .collection('chats')
-                          .doc(widget.chatId)
-                          .collection('messages')
-                          .add({
-                        'text': _messageController.text,
-                        'sender': currentUser.email,
-                        'timestamp': FieldValue.serverTimestamp(),
-                      });
-                      _messageController.clear();
-                    }
-                  },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          decoration: InputDecoration(
+                            hintText: 'Type your message...',
+                            hintStyle: TextStyle(
+                                color: Colors
+                                    .grey), // Puedes cambiar el color del texto del hint si lo deseas
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send, color: Colors.green),
+                        onPressed: () async {
+                          final currentUser = _auth.currentUser;
+                          if (currentUser != null) {
+                            await _firestore
+                                .collection('chats')
+                                .doc(widget.chatId)
+                                .collection('messages')
+                                .add({
+                              'text': _messageController.text,
+                              'sender': currentUser.email,
+                              'timestamp': FieldValue.serverTimestamp(),
+                            });
+                            _messageController.clear();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -172,7 +199,7 @@ class MessageBubble extends StatelessWidget {
             sender,
             style: TextStyle(
               fontSize: 12,
-              color: Color.fromARGB(255, 255, 255, 255),
+              color: Colors.black, // Color negro
             ),
           ),
           Material(
@@ -184,16 +211,16 @@ class MessageBubble extends StatelessWidget {
             ),
             elevation: 5,
             color: isMe
-                ? Colors.lightBlueAccent
-                : Color.fromARGB(255, 255, 255, 255),
+                ? Color.fromARGB(
+                    255, 144, 238, 144) // Verde claro para los mensajes propios
+                : Color.fromARGB(255, 224, 255,
+                    255), // Celeste claro para mensajes recibidos
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Text(
                 text,
                 style: TextStyle(
-                  color: isMe
-                      ? Color.fromARGB(255, 228, 228, 228)
-                      : Color.fromARGB(255, 0, 0, 0),
+                  color: Colors.black, // Texto negro en ambos tipos de mensajes
                   fontSize: 15,
                 ),
               ),
