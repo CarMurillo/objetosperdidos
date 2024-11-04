@@ -258,7 +258,7 @@ class ContenedorPersonalizado extends StatelessWidget {
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black)), // Texto negro
-            Text('Edificio: $edificio',
+            Text('$edificio',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.black)), // Texto negro
