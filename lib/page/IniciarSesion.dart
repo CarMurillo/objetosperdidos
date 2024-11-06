@@ -40,8 +40,11 @@ class IniciarSesion extends StatelessWidget {
                   ),
                   child: TextField(
                     controller: emailController,
+                    style: TextStyle(color: Colors.black), // Texto en negro
                     decoration: InputDecoration(
                       labelText: 'Correo electrónico',
+                      labelStyle:
+                          TextStyle(color: Colors.black), // Letras en negro
                       border: InputBorder.none, // Sin borde por defecto
                     ),
                   ),
@@ -59,8 +62,11 @@ class IniciarSesion extends StatelessWidget {
                   ),
                   child: TextField(
                     controller: passwordController,
+                    style: TextStyle(color: Colors.black), // Texto en negro
                     decoration: InputDecoration(
                       labelText: 'Contraseña',
+                      labelStyle:
+                          TextStyle(color: Colors.black), // Letras en negro
                       border: InputBorder.none, // Sin borde por defecto
                     ),
                     obscureText:
