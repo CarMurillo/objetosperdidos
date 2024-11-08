@@ -30,6 +30,18 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
     _edificioSeleccionado = 'Edificio A';
   }
 
+  Future<void> _getImageFromCamera() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      setState(() {
+        _imageFile = File(image.path);
+      });
+    } else {
+      print('No se tomó ninguna foto.');
+    }
+  }
+
   Future<void> _getImageFromGallery() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
@@ -75,33 +87,20 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color(0xFFC3D631), // Color de la AppBar
+          backgroundColor: Color(0xFFC3D631),
           elevation: 0,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Eliminé el GestureDetector y el Icon para quitar la flecha
+              SizedBox(width: 16), // Espacio entre la flecha y el título
               Text(
-                'OBJETOS PERDIDOS',
+                'NUEVO OBJETO',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black, // Texto en negro
                 ),
               ),
-              Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Perfil()),
-                  );
-                },
-                child: Image.asset(
-                  'img/usuario-verificado.png',
-                  width: 50,
-                  height: 50,
-                ),
-              )
             ],
           ),
           shape: RoundedRectangleBorder(
@@ -113,24 +112,19 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
       ),
       body: Stack(
         children: [
-          // Fondo de pantalla
-          Center(
+          // Fondo de pantalla que ocupa toda la pantalla
+          Positioned.fill(
             child: Container(
-              width: 300, // Ajusta el ancho deseado
-              height: 300, // Ajusta la altura deseada
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      'img/fondo-universidad.png'), // Ruta de tu imagen de fondo
-                  fit: BoxFit
-                      .cover, // Asegúrate de que la imagen cubra el contenedor
+                  image: AssetImage('img/fondo-app-perdido.jpeg'),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
           ),
           // Contenedor con contenido
           Container(
-            color: Colors.white, // Fondo blanco
             child: Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(16.0),
@@ -185,16 +179,28 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
                     SizedBox(height: 16.0),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
+                        backgroundColor: Color(0xFFC3D631), // Fondo verde
+                        foregroundColor: Colors.black, // Texto negro
                         side: BorderSide(color: Color(0xFF002366), width: 2),
                       ),
                       onPressed: _getImageFromGallery,
-                      child: Text('Seleccionar Imagen'),
+                      child: Text('Seleccionar Imagen de la Galería'),
                     ),
                     SizedBox(height: 16.0),
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black,
+                        backgroundColor: Color(0xFFC3D631), // Fondo verde
+                        foregroundColor: Colors.black, // Texto negro
+                        side: BorderSide(color: Color(0xFF002366), width: 2),
+                      ),
+                      onPressed: _getImageFromCamera, // Abrir la cámara
+                      child: Text('Tomar Foto'),
+                    ),
+                    SizedBox(height: 16.0),
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Color(0xFFC3D631), // Fondo verde
+                        foregroundColor: Colors.black, // Texto negro
                         side: BorderSide(color: Color(0xFF002366), width: 2),
                       ),
                       onPressed: () {
@@ -277,15 +283,15 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
           value: item,
           child: Text(
             item,
-            style: TextStyle(color: Colors.white), // Cambiar a texto blanco
+            style: TextStyle(color: Colors.black),
           ),
         );
       }).toList(),
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: Color(0xFF002366), // Fondo del desplegable
-        labelStyle: TextStyle(color: Colors.white), // Etiqueta en blanco
+        fillColor: Colors.white,
+        labelStyle: TextStyle(color: Colors.black),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Color(0xFF002366), width: 3),
@@ -301,22 +307,20 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
 
 class ContenedorPersonalizado extends StatelessWidget {
   final String imagePath;
-
-  const ContenedorPersonalizado({Key? key, required this.imagePath})
-      : super(key: key);
+  ContenedorPersonalizado({required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 100,
+      width: 200,
+      height: 200,
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF002366), width: 2),
-        borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
           image: FileImage(File(imagePath)),
           fit: BoxFit.cover,
         ),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.black, width: 2),
       ),
     );
   }

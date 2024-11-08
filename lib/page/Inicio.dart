@@ -8,55 +8,81 @@ class Inicio extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Color de fondo blanco
-      appBar: AppBar(
-        title: SizedBox.shrink(), // Eliminar el título
-        centerTitle: true,
-        backgroundColor: Color(0xFFC3D631), // Color verde
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.6,
-                height: MediaQuery.of(context).size.width * 0.6,
-                child: Image.asset(
-                  'img/logo.png',
-                  fit: BoxFit.contain,
+      appBar: null, // Eliminar la AppBar (barra verde superior)
+      body: Stack(
+        children: [
+          // Imagen de fondo
+          Container(
+            width: double.infinity, // Asegura que ocupe todo el ancho
+            height: double.infinity, // Asegura que ocupe todo el alto
+            child: Image.asset(
+              'img/fondo-app.jpeg', // Ruta de la imagen de fondo
+              fit: BoxFit.cover, // La imagen cubre toda la pantalla
+            ),
+          ),
+          // Contenido principal
+          Center(
+            // Centrar todo el contenido dentro de la pantalla
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // Centrado verticalmente
+                  crossAxisAlignment:
+                      CrossAxisAlignment.center, // Centrado horizontalmente
+                  children: [
+                    // Espacio para logo, aumento de tamaño
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width *
+                          0.8, // Aumenta el tamaño del logo
+                      height: MediaQuery.of(context).size.width *
+                          0.8, // Aumenta el tamaño del logo
+                      child: Image.asset(
+                        'img/logo.png', // Ruta del logo
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                    // Botón Iniciar sesión
+                    _buildElevatedButton(
+                      context,
+                      'Iniciar sesión',
+                      () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => IniciarSesion()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    // Botón Registrarse
+                    _buildElevatedButton(
+                      context,
+                      'Registrarse',
+                      () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Registrarse()),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 40),
+                    // Redes sociales
+                    redessociales(),
+                  ],
                 ),
               ),
-              SizedBox(height: 40),
-              _buildElevatedButton(
-                context,
-                'Iniciar sesión',
-                () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => IniciarSesion()),
-                  );
-                },
-              ),
-              SizedBox(height: 20),
-              _buildElevatedButton(
-                context,
-                'Registrarse',
-                () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => Registrarse()),
-                  );
-                },
-              ),
-              SizedBox(height: 40),
-              redessociales(),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
+  // Botón personalizado
   Widget _buildElevatedButton(
       BuildContext context, String text, VoidCallback onPressed) {
     return ElevatedButton(
@@ -108,6 +134,7 @@ class redessociales extends StatelessWidget {
     );
   }
 
+  // Icono de redes sociales
   Widget _buildSocialIcon(String url, String asset) {
     return GestureDetector(
       onTap: () {

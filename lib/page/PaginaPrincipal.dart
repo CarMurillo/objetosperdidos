@@ -14,6 +14,7 @@ class PaginaPrincipal extends StatefulWidget {
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _currentUser;
+  bool _isButtonHovered = false; // Variable para manejar el estado de hover
 
   @override
   void initState() {
@@ -45,11 +46,11 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'OBJETOS PERDIDOS',
+                'OBJETOS PERDIDOS O ENCONTRADOS',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // Texto en blanco
+                  color: Colors.black, // Texto en blanco
                 ),
               ),
               Spacer(),
@@ -140,20 +141,36 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         padding: const EdgeInsets.all(16.0),
         child: Align(
           alignment: Alignment.bottomRight,
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
-              );
+          child: GestureDetector(
+            onPanUpdate: (details) {
+              final buttonRect = Rect.fromLTWH(0, 0, 200,
+                  60); // Ajusta las dimensiones y posición según necesites
+
+              if (buttonRect.contains(details.localPosition)) {
+                setState(() {
+                  _isButtonHovered = true;
+                });
+              } else {
+                setState(() {
+                  _isButtonHovered = false;
+                });
+              }
             },
-            backgroundColor: Color(0xFFC3D631), // Verde claro
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                'Nuevo Objeto',
-                style: TextStyle(color: Colors.white), // Texto en blanco
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
+                );
+              },
+              backgroundColor: Color(0xFFC3D631), // Verde claro
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  'Nuevo Objeto',
+                  style: TextStyle(color: Colors.black), // Texto en blanco
+                ),
               ),
             ),
           ),
@@ -194,7 +211,10 @@ class ContenedorPersonalizado extends StatelessWidget {
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Colors.blue[50], // Fondo azul celeste muy claro
+          image: DecorationImage(
+            image: AssetImage('img/fondo-app.jpeg'), // Ruta de la imagen
+            fit: BoxFit.cover, // Ajuste de la imagen
+          ),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5)
           ],
@@ -210,13 +230,13 @@ class ContenedorPersonalizado extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                         color: Color.fromARGB(255, 65, 105, 225),
-                        width: 3), // Borde azul rey más grueso
+                        width: 2), // Borde azul rey más delgado
                     borderRadius:
                         BorderRadius.circular(8), // Redondear los bordes
                     color: Colors.transparent, // Fondo transparente
                   ),
                   padding: EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 2), // Más ajustado
+                      horizontal: 4, vertical: 2), // Ajustado aún más
                   child: TextButton(
                     onPressed: () {},
                     child: Text(
@@ -280,22 +300,7 @@ class ContenedorPersonalizado extends StatelessWidget {
                           fontSize: 14, color: Colors.black), // Texto negro
                     ),
                   ),
-                  SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatPage(chatId: chatId),
-                        ),
-                      );
-                    },
-                    child: Icon(
-                      iconData,
-                      size: 40,
-                      color: Colors.grey[800], // Gris oscuro para el icono
-                    ),
-                  )
+                  Icon(iconData, color: Colors.black),
                 ],
               ),
             ),

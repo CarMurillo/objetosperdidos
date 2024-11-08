@@ -23,7 +23,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color(0xFFC3D631), // Verde claro
+          backgroundColor: Color(0xFFC3D631),
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black, // Color negro
+                  color: Colors.black,
                 ),
               ),
               Spacer(),
@@ -60,23 +60,19 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: Container(
-        color: Colors.white, // Fondo blanco
+        color: Colors.white,
         child: Stack(
           children: [
-            // Imagen de fondo
             Center(
               child: Container(
-                width: MediaQuery.of(context).size.width *
-                    0.8, // 80% del ancho de la pantalla
-                height: MediaQuery.of(context).size.height *
-                    0.3, // 30% de la altura de la pantalla
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: Image.asset(
                   'img/imagen-universidad.jpg',
-                  fit: BoxFit.contain, // Ajusta la imagen sin recortarla
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
-            // Contenido del chat
             Column(
               children: [
                 Expanded(
@@ -97,13 +93,10 @@ class _ChatPageState extends State<ChatPage> {
                       final messages = snapshot.data!.docs.reversed;
 
                       if (messages.isEmpty) {
-                        // Si no hay mensajes, mostramos el mensaje
                         return Center(
                           child: Text(
                             'No hay mensajes aún. Sé el primero en enviar uno!',
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black), // Color negro
+                            style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
                         );
                       }
@@ -112,6 +105,7 @@ class _ChatPageState extends State<ChatPage> {
                       for (var message in messages) {
                         final messageText = message['text'];
                         final messageSender = message['sender'];
+                        final messageId = message.id;
 
                         final currentUser = _auth.currentUser;
                         final messageWidget = MessageBubble(
@@ -119,6 +113,8 @@ class _ChatPageState extends State<ChatPage> {
                           sender: messageSender,
                           isMe: currentUser != null &&
                               currentUser.email == messageSender,
+                          messageId: messageId,
+                          chatId: widget.chatId,
                         );
                         messageWidgets.add(messageWidget);
                       }
@@ -140,9 +136,7 @@ class _ChatPageState extends State<ChatPage> {
                           controller: _messageController,
                           decoration: InputDecoration(
                             hintText: 'Type your message...',
-                            hintStyle: TextStyle(
-                                color: Colors
-                                    .grey), // Puedes cambiar el color del texto del hint si lo deseas
+                            hintStyle: TextStyle(color: Colors.grey),
                           ),
                         ),
                       ),
@@ -180,53 +174,94 @@ class MessageBubble extends StatelessWidget {
   final String text;
   final String sender;
   final bool isMe;
+  final String messageId;
+  final String chatId;
 
   const MessageBubble({
     required this.text,
     required this.sender,
     required this.isMe,
+    required this.messageId,
+    required this.chatId,
   });
+
+  void _deleteMessage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Eliminar mensaje"),
+          content: Text("¿Estás seguro de que quieres eliminar este mensaje?"),
+          actions: [
+            TextButton(
+              child: Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Eliminar"),
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('chats')
+                    .doc(chatId)
+                    .collection('messages')
+                    .doc(messageId)
+                    .delete();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: [
-          Text(
-            sender,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.black, // Color negro
+    return GestureDetector(
+      onLongPress: () {
+        if (isMe) {
+          _deleteMessage(context);
+        }
+      },
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              sender,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.black,
+              ),
             ),
-          ),
-          Material(
-            borderRadius: BorderRadius.only(
-              topLeft: isMe ? Radius.circular(30) : Radius.circular(0),
-              topRight: isMe ? Radius.circular(0) : Radius.circular(30),
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
-            ),
-            elevation: 5,
-            color: isMe
-                ? Color.fromARGB(
-                    255, 144, 238, 144) // Verde claro para los mensajes propios
-                : Color.fromARGB(255, 224, 255,
-                    255), // Celeste claro para mensajes recibidos
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: Colors.black, // Texto negro en ambos tipos de mensajes
-                  fontSize: 15,
+            Material(
+              borderRadius: BorderRadius.only(
+                topLeft: isMe ? Radius.circular(30) : Radius.circular(0),
+                topRight: isMe ? Radius.circular(0) : Radius.circular(30),
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              elevation: 5,
+              color: isMe
+                  ? Color.fromARGB(255, 144, 238, 144)
+                  : Color.fromARGB(255, 224, 255, 255),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

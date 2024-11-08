@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:aplicacion/page/Inicio.dart';
 
 class Perfil extends StatefulWidget {
   const Perfil({super.key});
@@ -37,113 +38,150 @@ class _PerfilState extends State<Perfil> {
 
   Future<void> _deleteObjeto(String objetoId, String imageUrl) async {
     try {
-      // Eliminar el objeto de Firestore
       await _firestore.collection('objetos').doc(objetoId).delete();
-
-      // Eliminar la imagen de Firebase Storage
       final ref = FirebaseStorage.instance.refFromURL(imageUrl);
       await ref.delete();
-
-      // Eliminar el chat asociado (suponiendo que el chat tiene el mismo ID que el objeto)
       await _firestore.collection('chats').doc(objetoId).delete();
-
-      _getUserData(); // Refrescar la lista después de la eliminación
+      _getUserData();
     } catch (e) {
       print('Error al eliminar el objeto: $e');
     }
   }
 
+  Future<void> _logout() async {
+    await _auth.signOut();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => Inicio()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Fondo blanco
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: AppBar(
-          backgroundColor: Color(0xFFC3D631), // Color verde de la AppBar
-          elevation: 0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'OBJETOS PERDIDOS',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+      // Fondo de pantalla
+      body: Stack(
+        children: [
+          // Imagen de fondo
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      'img/fondo-app-perdido.jpeg'), // Cambia la ruta de la imagen si es necesario
+                  fit: BoxFit.cover,
                 ),
               ),
-              Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Perfil()),
-                  );
-                },
-                child: Image.asset(
-                  'img/usuario-verificado.png',
-                  width: 50,
-                  height: 50,
-                ),
-              )
-            ],
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(20),
             ),
           ),
-        ),
-      ),
-      body: _user == null
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.center, // Centrando el contenido
-                children: [
-                  Text(
-                    'Bienvenido, ${_user!.displayName ?? 'Usuario'}',
-                    style: TextStyle(
-                        fontSize: 20,
+          // Contenido sobre la imagen de fondo
+          Column(
+            children: [
+              AppBar(
+                backgroundColor: Color(0xFFC3D631), // Fondo verde del AppBar
+                elevation: 0,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'PERFIL DE USUARIO',
+                      style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black), // Color de letra negro
-                  ),
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Tus objetos subidos:',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black), // Color de letra negro
-                  ),
-                  SizedBox(height: 8.0),
-                  if (_objetos.isEmpty)
-                    Text('No has subido ningún objeto.',
-                        style: TextStyle(
-                            color: Colors.black)), // Color de letra negro
-                  for (var objeto in _objetos)
-                    Card(
-                      child: ListTile(
-                        leading: Image.network(objeto['imageUrl']),
-                        title: Text(objeto['descripcion'],
-                            style: TextStyle(
-                                color: Colors.white)), // Color de letra blanco
-                        tileColor:
-                            Color(0xFFC3D631), // Color de fondo del ListTile
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            _deleteObjeto(objeto.id, objeto['imageUrl']);
-                          },
-                        ),
+                        color: Colors.black, // Texto en blanco para el AppBar
                       ),
                     ),
-                ],
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Perfil()),
+                        );
+                      },
+                      child: Image.asset(
+                        'img/usuario-verificado.png',
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.logout,
+                          color: Colors.white), // Icono en blanco
+                      onPressed: _logout,
+                    ),
+                  ],
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(20),
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: _user == null
+                    ? Center(child: CircularProgressIndicator())
+                    : SingleChildScrollView(
+                        padding: EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Bienvenido, ${_user!.displayName ?? 'Usuario'}',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Letras en negro
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            Text(
+                              'Tus objetos subidos:',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Letras en negro
+                              ),
+                            ),
+                            SizedBox(height: 8.0),
+                            if (_objetos.isEmpty)
+                              Text(
+                                'No has subido ningún objeto.',
+                                style: TextStyle(
+                                    color: Colors.black), // Texto en negro
+                              ),
+                            for (var objeto in _objetos)
+                              Card(
+                                color: Colors
+                                    .white, // Fondo blanco para los objetos
+                                child: ListTile(
+                                  leading: Image.network(objeto['imageUrl']),
+                                  title: Text(
+                                    objeto['descripcion'],
+                                    style: TextStyle(
+                                        color: Colors
+                                            .black), // Texto en negro para los objetos
+                                  ),
+                                  tileColor: Color(
+                                      0xFFC3D631), // Fondo verde de los cuadritos
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _deleteObjeto(
+                                          objeto.id, objeto['imageUrl']);
+                                    },
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
