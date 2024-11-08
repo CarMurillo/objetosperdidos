@@ -14,7 +14,7 @@ class PaginaPrincipal extends StatefulWidget {
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _currentUser;
-  bool _isButtonHovered = false; // Variable para manejar el estado de hover
+  bool _isButtonHovered = false;
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          backgroundColor: Color(0xFFC3D631), // Verde claro
+          backgroundColor: Color(0xFFC3D631),
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,7 +50,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black, // Texto en blanco
+                  color: Colors.black,
                 ),
               ),
               Spacer(),
@@ -89,8 +89,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
             return Center(
               child: Text(
                 'No hay ningún objeto subido',
-                style:
-                    TextStyle(fontSize: 18, color: Colors.black), // Texto negro
+                style: TextStyle(fontSize: 18, color: Colors.black),
               ),
             );
           }
@@ -143,8 +142,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           alignment: Alignment.bottomRight,
           child: GestureDetector(
             onPanUpdate: (details) {
-              final buttonRect = Rect.fromLTWH(0, 0, 200,
-                  60); // Ajusta las dimensiones y posición según necesites
+              final buttonRect = Rect.fromLTWH(0, 0, 200, 60);
 
               if (buttonRect.contains(details.localPosition)) {
                 setState(() {
@@ -163,13 +161,13 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                   MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
                 );
               },
-              backgroundColor: Color(0xFFC3D631), // Verde claro
+              backgroundColor: Color(0xFFC3D631),
               child: Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 child: Text(
                   'Nuevo Objeto',
-                  style: TextStyle(color: Colors.black), // Texto en blanco
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ),
@@ -212,8 +210,8 @@ class ContenedorPersonalizado extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: AssetImage('img/fondo-app.jpeg'), // Ruta de la imagen
-            fit: BoxFit.cover, // Ajuste de la imagen
+            image: AssetImage('img/fondo-app.jpeg'),
+            fit: BoxFit.cover,
           ),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 5)
@@ -225,25 +223,20 @@ class ContenedorPersonalizado extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Contenedor con borde azul rey y fondo transparente
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                        color: Color.fromARGB(255, 65, 105, 225),
-                        width: 2), // Borde azul rey más delgado
-                    borderRadius:
-                        BorderRadius.circular(8), // Redondear los bordes
-                    color: Colors.transparent, // Fondo transparente
+                        color: Color.fromARGB(255, 65, 105, 225), width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.transparent,
                   ),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 4, vertical: 2), // Ajustado aún más
+                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                   child: TextButton(
                     onPressed: () {},
                     child: Text(
                       category,
                       style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold), // Texto en negro
+                          color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -258,10 +251,8 @@ class ContenedorPersonalizado extends StatelessWidget {
             if (imagePath != null)
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(
-                      color: Colors.black,
-                      width: 2), // Borde negro alrededor de la imagen
-                  borderRadius: BorderRadius.circular(10), // Bordes redondeados
+                  border: Border.all(color: Colors.black, width: 2),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
@@ -275,20 +266,14 @@ class ContenedorPersonalizado extends StatelessWidget {
               ),
             SizedBox(height: 10),
             Text('Salón: $salon',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)), // Texto negro
-            Text('$edificio',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)), // Texto negro
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('$edificio', style: TextStyle(fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: Colors.grey[800]!, width: 1.5), // Borde gris oscuro
+                border: Border.all(color: Colors.grey[800]!, width: 1.5),
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.grey[300], // Color gris claro para el fondo
+                color: Colors.grey[300],
               ),
               padding: EdgeInsets.all(8),
               child: Row(
@@ -296,11 +281,20 @@ class ContenedorPersonalizado extends StatelessWidget {
                   Expanded(
                     child: Text(
                       descriptionText,
-                      style: TextStyle(
-                          fontSize: 14, color: Colors.black), // Texto negro
+                      style: TextStyle(fontSize: 14, color: Colors.black),
                     ),
                   ),
-                  Icon(iconData, color: Colors.black),
+                  IconButton(
+                    icon: Icon(iconData, color: Colors.black),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(chatId: chatId),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
