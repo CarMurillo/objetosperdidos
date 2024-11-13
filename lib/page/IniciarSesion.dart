@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aplicacion/page/PaginaPrincipal.dart';
 import 'package:aplicacion/page/Registrarse.dart';
 import 'package:aplicacion/page/Inicio.dart';
+import 'package:aplicacion/page/passwordRecoveryScreen.dart'; 
 
 class IniciarSesion extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -167,6 +168,26 @@ class IniciarSesion extends StatelessWidget {
                         style: TextStyle(color: Colors.black),
                       ),
                     ),
+                    SizedBox(height: 16),
+                    // Texto de recuperación de contraseña
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PasswordRecoveryScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        '¿Olvidaste tu contraseña?',
+                        style: TextStyle(
+                          color: Colors.black,
+                          decoration: TextDecoration.underline,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -177,3 +198,4 @@ class IniciarSesion extends StatelessWidget {
     );
   }
 }
+                  

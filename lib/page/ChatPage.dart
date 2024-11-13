@@ -137,7 +137,7 @@ class _ChatPageState extends State<ChatPage> {
                           style: TextStyle(
                               color: Colors.black), // Color negro para el texto
                           decoration: InputDecoration(
-                            hintText: 'Type your message...',
+                            hintText: 'Escribe tu mensaje...',
                             hintStyle: TextStyle(color: Colors.grey),
                           ),
                         ),
@@ -203,14 +203,19 @@ class MessageBubble extends StatelessWidget {
             ),
             TextButton(
               child: Text("Eliminar"),
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection('chats')
-                    .doc(chatId)
-                    .collection('messages')
-                    .doc(messageId)
-                    .delete();
-                Navigator.of(context).pop();
+              onPressed: () async {
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('chats')
+                      .doc(chatId)
+                      .collection('messages')
+                      .doc(messageId)
+                      .delete();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  print('Error al eliminar el mensaje: $e');
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],
