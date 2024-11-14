@@ -14,13 +14,6 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   String? _successMessage;
 
   Future<void> _sendPasswordResetEmail() async {
-    if (_emailController.text.trim().isEmpty) {
-      setState(() {
-        _errorMessage = 'Por favor ingresa un correo electrónico';
-      });
-      return;
-    }
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -28,18 +21,6 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     });
 
     try {
-      // Primero verificamos si el correo existe
-      var methods = await _auth.fetchSignInMethodsForEmail(_emailController.text.trim());
-      
-      if (methods.isEmpty) {
-        setState(() {
-          _errorMessage = 'El correo electrónico no está registrado';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Si el correo existe, enviamos el email de recuperación
       await _auth.sendPasswordResetEmail(
         email: _emailController.text.trim(),
       );
@@ -54,7 +35,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
             _errorMessage = 'El correo electrónico no es válido';
             break;
           case 'user-not-found':
-            _errorMessage = 'El correo electrónico no está registrado';
+            _errorMessage = 'No existe una cuenta con este correo electrónico';
             break;
           default:
             _errorMessage = 'Ocurrió un error al enviar el correo';
@@ -97,7 +78,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
             width: double.infinity,
             height: double.infinity,
             child: Image.asset(
-              'img/fondo-app.jpeg',
+              'img/fondo-app.jpeg', // Aquí debes usar tu imagen
               fit: BoxFit.cover,
             ),
           ),
@@ -119,6 +100,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                       labelText: 'Correo Electrónico',
                       labelStyle: TextStyle(color: Colors.black),
                       hintText: 'Ingresa tu correo electrónico',
+                      hintStyle: TextStyle(color: Colors.grey),
                       border: InputBorder.none,
                     ),
                     style: TextStyle(color: Colors.black),
@@ -144,12 +126,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Color.fromARGB(255, 8, 46, 9).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       _successMessage!,
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Color.fromARGB(255, 53, 52, 52), fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
