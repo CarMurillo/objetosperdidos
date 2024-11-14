@@ -145,7 +145,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                'Nuevo Objeto',
+                'Nuevo',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: MediaQuery.of(context).size.width *
