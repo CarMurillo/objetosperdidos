@@ -48,7 +48,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               Text(
                 'OBJETOS PERDIDOS O ENCONTRADOS',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: MediaQuery.of(context).size.width *
+                      0.045, // Adaptado al ancho de pantalla
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -63,8 +64,8 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 },
                 child: Image.asset(
                   'img/usuario-verificado.png',
-                  width: 50,
-                  height: 50,
+                  width: MediaQuery.of(context).size.width * 0.12,
+                  height: MediaQuery.of(context).size.width * 0.12,
                 ),
               )
             ],
@@ -89,7 +90,10 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
             return Center(
               child: Text(
                 'No hay ningún objeto subido',
-                style: TextStyle(fontSize: 18, color: Colors.black),
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                  color: Colors.black,
+                ),
               ),
             );
           }
@@ -98,25 +102,14 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
             child: Column(
               children: objetos.map((doc) {
                 final data = doc.data() as Map<String, dynamic>;
-
-                final imageUrl = data['imageUrl'] != null
-                    ? data['imageUrl'] as String
-                    : null;
-                final userId = data['userId'] != null
-                    ? data['userId'] as String
-                    : 'unknown_user';
-                final descripcion = data['descripcion'] != null
-                    ? data['descripcion'] as String
-                    : 'Sin descripción';
-                final categoria = data['categoria'] != null
-                    ? data['categoria'] as String
-                    : 'Sin categoría';
-                final salon = data['salon'] != null
-                    ? data['salon'].toString()
-                    : 'Sin salón';
-                final edificio = data['edificio'] != null
-                    ? data['edificio'] as String
-                    : 'Sin edificio';
+                final imageUrl = data['imageUrl'] as String?;
+                final userId = data['userId'] as String? ?? 'unknown_user';
+                final descripcion =
+                    data['descripcion'] as String? ?? 'Sin descripción';
+                final categoria =
+                    data['categoria'] as String? ?? 'Sin categoría';
+                final salon = data['salon']?.toString() ?? 'Sin salón';
+                final edificio = data['edificio'] as String? ?? 'Sin edificio';
                 final chatId = doc.id;
 
                 return ContenedorPersonalizado(
@@ -140,34 +133,23 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
         padding: const EdgeInsets.all(16.0),
         child: Align(
           alignment: Alignment.bottomRight,
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              final buttonRect = Rect.fromLTWH(0, 0, 200, 60);
-
-              if (buttonRect.contains(details.localPosition)) {
-                setState(() {
-                  _isButtonHovered = true;
-                });
-              } else {
-                setState(() {
-                  _isButtonHovered = false;
-                });
-              }
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
+              );
             },
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ObjetoEncontrado()),
-                );
-              },
-              backgroundColor: Color(0xFFC3D631),
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  'Nuevo Objeto',
-                  style: TextStyle(color: Colors.black),
+            backgroundColor: Color(0xFFC3D631),
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                'Nuevo Objeto',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: MediaQuery.of(context).size.width *
+                      0.035, // Adaptado al ancho de pantalla
                 ),
               ),
             ),
@@ -203,6 +185,9 @@ class ContenedorPersonalizado extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double imageWidth = MediaQuery.of(context).size.width * 0.8;
+    double imageHeight = MediaQuery.of(context).size.height * 0.3;
+
     return Center(
       child: Container(
         margin: EdgeInsets.only(top: 8),
@@ -236,7 +221,10 @@ class ContenedorPersonalizado extends StatelessWidget {
                     child: Text(
                       category,
                       style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                      ),
                     ),
                   ),
                 ),
@@ -244,6 +232,7 @@ class ContenedorPersonalizado extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: onDelete,
+                    iconSize: MediaQuery.of(context).size.width * 0.06,
                   ),
               ],
             ),
@@ -258,16 +247,27 @@ class ContenedorPersonalizado extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(
                     imagePath!,
-                    width: 300,
-                    height: 300,
+                    width: imageWidth,
+                    height: imageHeight,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             SizedBox(height: 10),
-            Text('Salón: $salon',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('$edificio', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Salón: $salon',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+              ),
+            ),
+            Text(
+              '$edificio',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+              ),
+            ),
             SizedBox(height: 10),
             Container(
               decoration: BoxDecoration(
@@ -281,7 +281,10 @@ class ContenedorPersonalizado extends StatelessWidget {
                   Expanded(
                     child: Text(
                       descriptionText,
-                      style: TextStyle(fontSize: 14, color: Colors.black),
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -294,6 +297,7 @@ class ContenedorPersonalizado extends StatelessWidget {
                         ),
                       );
                     },
+                    iconSize: MediaQuery.of(context).size.width * 0.08,
                   ),
                 ],
               ),

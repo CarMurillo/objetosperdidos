@@ -69,7 +69,7 @@ class _PerfilState extends State<Perfil> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                      'img/fondo-app-perdido.jpeg'), // Cambia la ruta de la imagen si es necesario
+                      'img/fondo-app.jpeg'), // Cambia la ruta de la imagen si es necesario
                   fit: BoxFit.cover,
                 ),
               ),
@@ -132,7 +132,7 @@ class _PerfilState extends State<Perfil> {
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white, // Letras en negro
+                                color: Colors.black, // Letras en negro
                               ),
                             ),
                             SizedBox(height: 16.0),
@@ -141,7 +141,7 @@ class _PerfilState extends State<Perfil> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white, // Letras en negro
+                                color: Colors.black, // Letras en negro
                               ),
                             ),
                             SizedBox(height: 8.0),
