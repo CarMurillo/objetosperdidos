@@ -91,7 +91,6 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
           elevation: 0,
           title: Row(
             children: [
-              // Eliminé el GestureDetector y el Icon para quitar la flecha
               SizedBox(width: 16), // Espacio entre la flecha y el título
               Text(
                 'NUEVO OBJETO',
@@ -112,7 +111,6 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
       ),
       body: Stack(
         children: [
-          // Fondo de pantalla que ocupa toda la pantalla
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -123,7 +121,6 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
               ),
             ),
           ),
-          // Contenedor con contenido
           Container(
             child: Center(
               child: SingleChildScrollView(
@@ -250,10 +247,11 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
   }) {
     return TextFormField(
       controller: controller,
+      style: TextStyle(color: Colors.black), // Texto en negro
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.white, // Fondo blanco
         labelStyle: TextStyle(color: Colors.black),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -290,8 +288,8 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: Colors.white,
-        labelStyle: TextStyle(color: Colors.black),
+        fillColor: Colors.white, // Fondo blanco
+        labelStyle: TextStyle(color: Colors.black), // Texto negro
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Color(0xFF002366), width: 3),
@@ -301,26 +299,27 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
           borderSide: BorderSide(color: Color(0xFF002366), width: 3),
         ),
       ),
+      dropdownColor: Colors.white, // Fondo blanco del menú desplegable
     );
   }
 }
 
 class ContenedorPersonalizado extends StatelessWidget {
   final String imagePath;
+
   ContenedorPersonalizado({required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
-      height: 200,
+      width: 150,
+      height: 150,
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
           image: FileImage(File(imagePath)),
           fit: BoxFit.cover,
         ),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.black, width: 2),
       ),
     );
   }

@@ -192,17 +192,25 @@ class MessageBubble extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Eliminar mensaje"),
-          content: Text("¿Estás seguro de que quieres eliminar este mensaje?"),
+          backgroundColor:
+              Colors.white, // Fondo blanco para el cuadro de diálogo
+          title: Text(
+            "Eliminar mensaje",
+            style: TextStyle(color: Colors.black), // Texto en negro
+          ),
+          content: Text(
+            "¿Estás seguro de que quieres eliminar este mensaje?",
+            style: TextStyle(color: Colors.black), // Texto en negro
+          ),
           actions: [
             TextButton(
-              child: Text("Cancelar"),
+              child: Text("Cancelar", style: TextStyle(color: Colors.black)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Eliminar"),
+              child: Text("Eliminar", style: TextStyle(color: Colors.red)),
               onPressed: () async {
                 try {
                   await FirebaseFirestore.instance
