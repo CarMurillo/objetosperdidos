@@ -60,23 +60,23 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: Container(
-        color: Colors.white,
-        child: Stack(
+        color: Colors.white, // Fondo blanco
+        child: Column(
           children: [
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: Image.asset(
-                  'img/imagen-universidad.jpg',
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            Column(
-              children: [
-                Expanded(
-                  child: StreamBuilder(
+            Expanded(
+              child: Stack(
+                children: [
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Image.asset(
+                        'img/imagen-universidad.jpg',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  StreamBuilder(
                     stream: _firestore
                         .collection('chats')
                         .doc(widget.chatId)
@@ -126,44 +126,50 @@ class _ChatPageState extends State<ChatPage> {
                       );
                     },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          style: TextStyle(
-                              color: Colors.black), // Color negro para el texto
-                          decoration: InputDecoration(
-                            hintText: 'Escribe tu mensaje...',
-                            hintStyle: TextStyle(color: Colors.grey),
-                          ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      style: TextStyle(
+                          color: Colors.black), // Color negro para el texto
+                      decoration: InputDecoration(
+                        hintText: 'Escribe tu mensaje...',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white, // Fondo blanco
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.send, color: Colors.green),
-                        onPressed: () async {
-                          final currentUser = _auth.currentUser;
-                          if (currentUser != null) {
-                            await _firestore
-                                .collection('chats')
-                                .doc(widget.chatId)
-                                .collection('messages')
-                                .add({
-                              'text': _messageController.text,
-                              'sender': currentUser.email,
-                              'timestamp': FieldValue.serverTimestamp(),
-                            });
-                            _messageController.clear();
-                          }
-                        },
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  IconButton(
+                    icon: Icon(Icons.send, color: Colors.green),
+                    onPressed: () async {
+                      final currentUser = _auth.currentUser;
+                      if (currentUser != null) {
+                        await _firestore
+                            .collection('chats')
+                            .doc(widget.chatId)
+                            .collection('messages')
+                            .add({
+                          'text': _messageController.text,
+                          'sender': currentUser.email,
+                          'timestamp': FieldValue.serverTimestamp(),
+                        });
+                        _messageController.clear();
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -192,8 +198,7 @@ class MessageBubble extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor:
-              Colors.white, // Fondo blanco para el cuadro de diálogo
+          backgroundColor: Colors.white, // Fondo blanco
           title: Text(
             "Eliminar mensaje",
             style: TextStyle(color: Colors.black), // Texto en negro

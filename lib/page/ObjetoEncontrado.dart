@@ -113,12 +113,7 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
         children: [
           Positioned.fill(
             child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('img/fondo-app-perdido.jpeg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
+              color: Color(0xFFE8F5D4), // Fondo blanco crema tirando a verde
             ),
           ),
           Container(
@@ -299,7 +294,6 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
           borderSide: BorderSide(color: Color(0xFF002366), width: 3),
         ),
       ),
-      dropdownColor: Colors.white, // Fondo blanco del menú desplegable
     );
   }
 }
@@ -307,17 +301,25 @@ class _ObjetoEncontradoState extends State<ObjetoEncontrado> {
 class ContenedorPersonalizado extends StatelessWidget {
   final String imagePath;
 
-  ContenedorPersonalizado({required this.imagePath});
+  const ContenedorPersonalizado({
+    Key? key,
+    required this.imagePath,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
-      height: 150,
       decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Color(0xFF002366), width: 3),
         borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: FileImage(File(imagePath)),
+      ),
+      width: 300,
+      height: 300,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.file(
+          File(imagePath),
           fit: BoxFit.cover,
         ),
       ),
