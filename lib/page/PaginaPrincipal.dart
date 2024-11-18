@@ -14,7 +14,6 @@ class PaginaPrincipal extends StatefulWidget {
 class _PaginaPrincipalState extends State<PaginaPrincipal> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   User? _currentUser;
-  bool _isButtonHovered = false;
 
   @override
   void initState() {
@@ -25,13 +24,17 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
   Future<void> _deleteObject(String docId, String imageUrl) async {
     try {
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-      await FirebaseFirestore.instance
-          .collection('objetos')
-          .doc(docId)
-          .delete();
+      await FirebaseFirestore.instance.collection('objetos').doc(docId).delete();
     } catch (e) {
       print('Error eliminando el objeto: $e');
     }
+  }
+
+  // Función para actualizar la lista de objetos
+  Future<void> _refreshData() async {
+    setState(() {
+      // Forzar la actualización de los datos
+    });
   }
 
   @override
@@ -48,8 +51,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
               Text(
                 'OBJETOS PERDIDOS O ENCONTRADOS',
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width *
-                      0.045, // Adaptado al ancho de pantalla
+                  fontSize: MediaQuery.of(context).size.width * 0.045,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -77,57 +79,65 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
           ),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('objetos').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('objetos').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-          final objetos = snapshot.data!.docs;
+            // Filtrar objetos válidos
+            final objetos = snapshot.data!.docs.where((doc) {
+              final data = doc.data() as Map<String, dynamic>? ?? {};
+              return data['imageUrl'] != null &&
+                  data['imageUrl'] != '' &&
+                  data['descripcion'] != null &&
+                  data['descripcion'] != '';
+            }).toList();
 
-          if (objetos.isEmpty) {
-            return Center(
-              child: Text(
-                'No hay ningún objeto subido',
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.05,
-                  color: Colors.black,
+            if (objetos.isEmpty) {
+              return Center(
+                child: Text(
+                  'Sin objetos publicados. ¡Publique uno!',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.05,
+                    color: Colors.black,
+                  ),
                 ),
+              );
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                children: objetos.map((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  final imageUrl = data['imageUrl'] as String?;
+                  final userId = data['userId'] as String? ?? 'unknown_user';
+                  final descripcion = data['descripcion'] as String? ?? 'Sin descripción';
+                  final categoria = data['categoria'] as String? ?? 'Sin categoría';
+                  final salon = data['salon']?.toString() ?? 'Sin salón';
+                  final edificio = data['edificio'] as String? ?? 'Sin edificio';
+                  final chatId = doc.id;
+
+                  return ContenedorPersonalizado(
+                    imagePath: imageUrl,
+                    category: categoria,
+                    descriptionText: descripcion,
+                    salon: salon,
+                    edificio: edificio,
+                    iconData: Icons.message_rounded,
+                    showDeleteIcon:
+                        _currentUser != null && _currentUser!.uid == userId,
+                    onDelete: () => _deleteObject(doc.id, imageUrl ?? ''),
+                    chatId: chatId,
+                  );
+                }).toList(),
               ),
             );
-          }
-
-          return SingleChildScrollView(
-            child: Column(
-              children: objetos.map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
-                final imageUrl = data['imageUrl'] as String?;
-                final userId = data['userId'] as String? ?? 'unknown_user';
-                final descripcion =
-                    data['descripcion'] as String? ?? 'Sin descripción';
-                final categoria =
-                    data['categoria'] as String? ?? 'Sin categoría';
-                final salon = data['salon']?.toString() ?? 'Sin salón';
-                final edificio = data['edificio'] as String? ?? 'Sin edificio';
-                final chatId = doc.id;
-
-                return ContenedorPersonalizado(
-                  imagePath: imageUrl,
-                  category: categoria,
-                  descriptionText: descripcion,
-                  salon: salon,
-                  edificio: edificio,
-                  iconData: Icons.message_rounded,
-                  showDeleteIcon:
-                      _currentUser != null && _currentUser!.uid == userId,
-                  onDelete: () => _deleteObject(doc.id, imageUrl ?? ''),
-                  chatId: chatId,
-                );
-              }).toList(),
-            ),
-          );
-        },
+          },
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -148,8 +158,7 @@ class _PaginaPrincipalState extends State<PaginaPrincipal> {
                 'Nuevo',
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: MediaQuery.of(context).size.width *
-                      0.035, // Adaptado al ancho de pantalla
+                  fontSize: MediaQuery.of(context).size.width * 0.035,
                 ),
               ),
             ),
@@ -288,7 +297,7 @@ class ContenedorPersonalizado extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(iconData, color: Colors.black),
+                    icon: Icon(iconData),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -297,7 +306,6 @@ class ContenedorPersonalizado extends StatelessWidget {
                         ),
                       );
                     },
-                    iconSize: MediaQuery.of(context).size.width * 0.08,
                   ),
                 ],
               ),
